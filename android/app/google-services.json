@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "180902736377",
+    "project_id": "fluttergram-app-ab10b",
+    "storage_bucket": "fluttergram-app-ab10b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:180902736377:android:08fb88eef6ee6624178d28",
+        "android_client_info": {
+          "package_name": "com.notexample.saads_flutter_insta_clone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "180902736377-hc83i1jn8pckoc2igtdtbqrf4ues6cnh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9Mrlh5fOOFajwcuAjYcnAmHDI3vceso8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "180902736377-hc83i1jn8pckoc2igtdtbqrf4ues6cnh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
