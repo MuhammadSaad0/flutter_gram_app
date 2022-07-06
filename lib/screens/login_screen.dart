@@ -1,16 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gram/resources/auth_methods.dart';
+import 'package:flutter_gram/responsive/mobile_screen_layout.dart';
+import 'package:flutter_gram/responsive/responsive_layout_screen.dart';
+import 'package:flutter_gram/responsive/web_screen_layout.dart';
+import 'package:flutter_gram/screens/signup_screen.dart';
+import 'package:flutter_gram/utils/utils.dart';
 import '../widgets/text_field_input.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../utils/colors.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final TextEditingController _emailController = TextEditingController();
-    final TextEditingController _passwordController = TextEditingController();
+  State<LoginScreen> createState() => _LoginScreenState();
+}
 
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool isLoading = false;
+  void loginUser() async {
+    setState(() {
+      isLoading = true;
+    });
+    String res = await AuthMethod().loginUser(
+        email: _emailController.text, password: _passwordController.text);
+    if (res != "Success") {
+      showSnackbar(context, res);
+    } else {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => const ResponsiveLayout(
+              webScreenLayout: WebScreenLayout(),
+              mobileScreenLayout: MobileScreenLayout())));
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  void navigateToSignUp() {
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const SignUpScreen()));
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -46,15 +81,28 @@ class LoginScreen extends StatelessWidget {
               const SizedBox(
                 height: 20,
               ),
-              Container(
-                child: const Text('Login'),
-                width: double.infinity,
-                alignment: Alignment.center,
-                decoration: const ShapeDecoration(
-                    color: blueColor,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(4)))),
-                padding: const EdgeInsets.symmetric(vertical: 12),
+              InkWell(
+                onTap: loginUser,
+                child: Container(
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  decoration: const ShapeDecoration(
+                      color: blueColor,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(4)))),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: isLoading == true
+                      ? const Center(
+                          child: SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      : const Text('Login'),
+                ),
               ),
               const SizedBox(
                 height: 12,
@@ -71,7 +119,7 @@ class LoginScreen extends StatelessWidget {
                     child: const Text("Don't have an account?"),
                   ),
                   InkWell(
-                    onTap: () {},
+                    onTap: navigateToSignUp,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           vertical: 8, horizontal: 10),

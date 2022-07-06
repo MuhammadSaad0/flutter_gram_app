@@ -1,5 +1,9 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter_gram/responsive/mobile_screen_layout.dart';
+import 'package:flutter_gram/responsive/responsive_layout_screen.dart';
+import 'package:flutter_gram/responsive/web_screen_layout.dart';
+import 'package:flutter_gram/screens/login_screen.dart';
 import '../resources/auth_methods.dart';
 import '../utils/utils.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -14,6 +18,12 @@ class SignUpScreen extends StatefulWidget {
   State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
+final TextEditingController _emailController = TextEditingController();
+final TextEditingController _passwordController = TextEditingController();
+final TextEditingController _bioController = TextEditingController();
+final TextEditingController _usernameController = TextEditingController();
+bool isLoading = false;
+
 class _SignUpScreenState extends State<SignUpScreen> {
   Uint8List? _image;
 
@@ -26,13 +36,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
   }
 
+  void signUpUser() async {
+    setState(() {
+      isLoading = true;
+    });
+    String res = await AuthMethod().signUpUser(
+      email: _emailController.text,
+      password: _passwordController.text,
+      username: _usernameController.text,
+      bio: _bioController.text,
+      file: _image!,
+    );
+    if (res != 'Success') {
+      showSnackbar(context, res);
+    } else {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => const ResponsiveLayout(
+              webScreenLayout: WebScreenLayout(),
+              mobileScreenLayout: MobileScreenLayout())));
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  void navigateToLogin() {
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const LoginScreen()));
+  }
+
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _emailController = TextEditingController();
-    final TextEditingController _passwordController = TextEditingController();
-    final TextEditingController _bioController = TextEditingController();
-    final TextEditingController _usernameController = TextEditingController();
-
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -106,15 +140,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
               const SizedBox(
                 height: 20,
               ),
-              Container(
-                width: double.infinity,
-                alignment: Alignment.center,
-                decoration: const ShapeDecoration(
-                    color: blueColor,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(4)))),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: const Text('Login'),
+              InkWell(
+                onTap: signUpUser,
+                child: Container(
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  decoration: const ShapeDecoration(
+                      color: blueColor,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(4)))),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: isLoading != true
+                      ? const Text('SignUp')
+                      : const Center(
+                          child: SizedBox(
+                              height: 16,
+                              width: 16,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              )),
+                        ),
+                ),
               ),
               const SizedBox(
                 height: 12,
@@ -128,26 +174,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: const Text("Don't have an account?"),
+                    child: const Text("Already have an account?"),
                   ),
                   InkWell(
-                    onTap: () {
-                      AuthMethod().signUpUser(
-                        email: _emailController.text,
-                        password: _passwordController.text,
-                        username: _usernameController.text,
-                        bio: _bioController.text,
-                        file: _image!,
-                      );
-                    },
+                    onTap: navigateToLogin,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 10),
-                      child: const Text(
-                        "Sign Up",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 10),
+                        child: const Text(
+                          "Log In",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        )),
                   )
                 ],
               ),
