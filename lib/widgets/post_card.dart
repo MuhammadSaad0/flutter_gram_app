@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gram/resources/firestore_methods.dart';
+import 'package:flutter_gram/screens/comments_screen.dart';
 import 'package:flutter_gram/utils/colors.dart';
+import 'package:flutter_gram/utils/utils.dart';
 import 'package:flutter_gram/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
 import '../models/user.dart';
@@ -18,6 +21,28 @@ class PostCard extends StatefulWidget {
 
 class _PostCardState extends State<PostCard> {
   bool isLikeAnimating = false;
+  var commentLen = 0;
+  @override
+  void initState() {
+    super.initState();
+    getComments();
+  }
+
+  void getComments() async {
+    try {
+      QuerySnapshot snap = await FirebaseFirestore.instance
+          .collection('posts')
+          .doc(widget.snap['postId'])
+          .collection('comments')
+          .get();
+      setState(() {
+        commentLen = snap.docs.length;
+      });
+    } catch (err) {
+      showSnackbar(context, err.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final User user = Provider.of<UserProvider>(context).getUser;
@@ -145,7 +170,12 @@ class _PostCardState extends State<PostCard> {
                           )),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => CommentsScreen(
+                            snap: widget.snap,
+                          )));
+                },
                 icon: const Icon(
                   Icons.comment_outlined,
                 ),
@@ -209,7 +239,7 @@ class _PostCardState extends State<PostCard> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Text(
-                        'View all x Comments',
+                        'View all ${commentLen} Comments',
                         style: const TextStyle(
                             fontSize: 16, color: secondaryColor),
                       ),

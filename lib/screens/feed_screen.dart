@@ -4,9 +4,14 @@ import 'package:flutter_gram/utils/colors.dart';
 import 'package:flutter_gram/widgets/post_card.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class FeedScreen extends StatelessWidget {
+class FeedScreen extends StatefulWidget {
   const FeedScreen({Key? key}) : super(key: key);
 
+  @override
+  State<FeedScreen> createState() => _FeedScreenState();
+}
+
+class _FeedScreenState extends State<FeedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,10 +37,15 @@ class FeedScreen extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             }
-            return ListView.builder(
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (context, index) => PostCard(
-                snap: snapshot.data!.docs[index].data(),
+            return RefreshIndicator(
+              onRefresh: () async {
+                setState(() {});
+              },
+              child: ListView.builder(
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (context, index) => PostCard(
+                  snap: snapshot.data!.docs[index].data(),
+                ),
               ),
             );
           }),
