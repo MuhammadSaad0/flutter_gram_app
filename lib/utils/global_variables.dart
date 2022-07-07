@@ -1,14 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gram/screens/add_post_screen.dart';
-import 'package:flutter_gram/screens/feed_screen.dart';
-import 'package:flutter_gram/screens/search_screen.dart';
+import '../screens/add_post_screen.dart';
+import '../screens/feed_screen.dart';
+import '../screens/profile_screen.dart';
+import "../screens/search_screen.dart";
 
 const WebScreenSize = 600;
 
-const homeScreenItems = [
-  FeedScreen(),
-  SearchScreen(),
-  AddPostScreen(),
-  Text('notif'),
-  Text('profile'),
+var homeScreenItems = [
+  const FeedScreen(),
+  const SearchScreen(),
+  const AddPostScreen(),
+  const Text('notif'),
+  ProfileScreen(
+    uid: FirebaseAuth.instance.currentUser!.uid,
+  ),
 ];

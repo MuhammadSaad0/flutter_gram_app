@@ -4,6 +4,7 @@ import 'package:flutter_gram/responsive/mobile_screen_layout.dart';
 import 'package:flutter_gram/responsive/responsive_layout_screen.dart';
 import 'package:flutter_gram/responsive/web_screen_layout.dart';
 import 'package:flutter_gram/screens/login_screen.dart';
+import 'package:neopop/neopop.dart';
 import '../resources/auth_methods.dart';
 import '../utils/utils.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -37,6 +38,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void signUpUser() async {
+    if (_emailController.text == "" ||
+        _passwordController.text == "" ||
+        _usernameController.text == "" ||
+        _bioController.text == "" ||
+        _image == null) {
+      showSnackbar(context, "One or more fields cannot be empty");
+      return;
+    }
     setState(() {
       isLoading = true;
     });
@@ -140,28 +149,53 @@ class _SignUpScreenState extends State<SignUpScreen> {
               const SizedBox(
                 height: 20,
               ),
-              InkWell(
-                onTap: signUpUser,
-                child: Container(
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  decoration: const ShapeDecoration(
-                      color: blueColor,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(4)))),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: isLoading != true
-                      ? const Text('SignUp')
-                      : const Center(
-                          child: SizedBox(
-                              height: 16,
-                              width: 16,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                              )),
-                        ),
+              NeoPopTiltedButton(
+                isFloating: false,
+                onTapUp: signUpUser,
+                decoration: const NeoPopTiltedButtonDecoration(
+                  color: Color.fromARGB(255, 52, 133, 255),
+                  plunkColor: Color.fromARGB(255, 52, 113, 255),
+                  shadowColor: Color.fromRGBO(36, 36, 36, 1),
+                  showShimmer: true,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 50.0,
+                    vertical: 15,
+                  ),
+                  child: isLoading == true
+                      ? const SizedBox(
+                          height: 16,
+                          width: 34,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text('Sign Up'),
                 ),
               ),
+              // InkWell(
+              //   onTap: signUpUser,
+              //   child: Container(
+              //     width: double.infinity,
+              //     alignment: Alignment.center,
+              //     decoration: const ShapeDecoration(
+              //         color: blueColor,
+              //         shape: RoundedRectangleBorder(
+              //             borderRadius: BorderRadius.all(Radius.circular(4)))),
+              //     padding: const EdgeInsets.symmetric(vertical: 12),
+              //     child: isLoading != true
+              //         ? const Text('SignUp')
+              //         : const Center(
+              //             child: SizedBox(
+              //                 height: 16,
+              //                 width: 16,
+              //                 child: CircularProgressIndicator(
+              //                   color: Colors.white,
+              //                 )),
+              //           ),
+              //   ),
+              // ),
               const SizedBox(
                 height: 12,
               ),

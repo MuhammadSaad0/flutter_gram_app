@@ -5,6 +5,7 @@ import 'package:flutter_gram/responsive/responsive_layout_screen.dart';
 import 'package:flutter_gram/responsive/web_screen_layout.dart';
 import 'package:flutter_gram/screens/signup_screen.dart';
 import 'package:flutter_gram/utils/utils.dart';
+import 'package:neopop/neopop.dart';
 import '../widgets/text_field_input.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../utils/colors.dart';
@@ -81,29 +82,54 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(
                 height: 20,
               ),
-              InkWell(
-                onTap: loginUser,
-                child: Container(
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  decoration: const ShapeDecoration(
-                      color: blueColor,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(4)))),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+              NeoPopTiltedButton(
+                isFloating: false,
+                onTapUp: loginUser,
+                decoration: const NeoPopTiltedButtonDecoration(
+                  color: Color.fromARGB(255, 52, 133, 255),
+                  plunkColor: Color.fromARGB(255, 52, 113, 255),
+                  shadowColor: Color.fromRGBO(36, 36, 36, 1),
+                  showShimmer: true,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 50.0,
+                    vertical: 15,
+                  ),
                   child: isLoading == true
-                      ? const Center(
-                          child: SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                            ),
+                      ? const SizedBox(
+                          height: 16,
+                          width: 34,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
                           ),
                         )
                       : const Text('Login'),
                 ),
               ),
+              // InkWell(
+              //   onTap: loginUser,
+              //   child: Container(
+              //     width: double.infinity,
+              //     alignment: Alignment.center,
+              //     decoration: const ShapeDecoration(
+              //         color: blueColor,
+              //         shape: RoundedRectangleBorder(
+              //             borderRadius: BorderRadius.all(Radius.circular(4)))),
+              //     padding: const EdgeInsets.symmetric(vertical: 12),
+              //     child: isLoading == true
+              //         ? const Center(
+              //             child: SizedBox(
+              //               width: 16,
+              //               height: 16,
+              //               child: CircularProgressIndicator(
+              //                 color: Colors.white,
+              //               ),
+              //             ),
+              //           )
+              //         : const Text('Login'),
+              //   ),
+              // ),
               const SizedBox(
                 height: 12,
               ),
