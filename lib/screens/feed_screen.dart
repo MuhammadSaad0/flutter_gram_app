@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gram/screens/login_screen.dart';
 import 'package:flutter_gram/utils/colors.dart';
+import 'package:flutter_gram/widgets/logout_dialog.dart';
 import 'package:flutter_gram/widgets/post_card.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -25,11 +28,19 @@ class _FeedScreenState extends State<FeedScreen> {
         ),
         actions: [
           IconButton(
-              onPressed: () {}, icon: const Icon(Icons.messenger_outline)),
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) => const LogOutDialog());
+              },
+              icon: const Icon(Icons.logout)),
         ],
       ),
       body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+          stream: FirebaseFirestore.instance
+              .collection('posts')
+              .orderBy('datePublished', descending: true)
+              .snapshots(),
           builder: (context,
               AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {

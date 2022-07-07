@@ -61,6 +61,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
   }
 
   void postImage(String uid, String username, String profImage) async {
+    FocusScope.of(context).unfocus();
     setState(() {
       _isLoading = true;
     });

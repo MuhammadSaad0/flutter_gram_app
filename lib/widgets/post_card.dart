@@ -21,6 +21,7 @@ class PostCard extends StatefulWidget {
 
 class _PostCardState extends State<PostCard> {
   bool isLikeAnimating = false;
+  bool isDeleting = false;
   var commentLen = 0;
   @override
   void initState() {
@@ -89,7 +90,20 @@ class _PostCardState extends State<PostCard> {
                                 'Delete',
                               ]
                                   .map((e) => InkWell(
-                                        onTap: () {},
+                                        onTap: () async {
+                                          if (widget.snap['uid'] == user.uid) {
+                                            FirestoreMethods().deletePost(
+                                              widget.snap['postId'],
+                                            );
+                                            Navigator.of(context).pop();
+                                            showSnackbar(context,
+                                                "Post deleted successfully");
+                                          } else {
+                                            Navigator.of(context).pop();
+                                            showSnackbar(context,
+                                                "You can only delete your own posts");
+                                          }
+                                        },
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 12, horizontal: 16),
