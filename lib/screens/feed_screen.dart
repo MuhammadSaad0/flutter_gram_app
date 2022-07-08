@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gram/screens/login_screen.dart';
 import 'package:flutter_gram/utils/colors.dart';
+import 'package:flutter_gram/utils/global_variables.dart';
 import 'package:flutter_gram/widgets/logout_dialog.dart';
 import 'package:flutter_gram/widgets/post_card.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -18,24 +19,28 @@ class _FeedScreenState extends State<FeedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: mobileBackgroundColor,
-        centerTitle: false,
-        title: SvgPicture.asset(
-          'assets/ic_instagram.svg',
-          color: primaryColor,
-          height: 32,
-        ),
-        actions: [
-          IconButton(
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (context) => const LogOutDialog());
-              },
-              icon: const Icon(Icons.logout)),
-        ],
-      ),
+      appBar: MediaQuery.of(context).size.width > WebScreenSize
+          ? null
+          : AppBar(
+              backgroundColor: MediaQuery.of(context).size.width > WebScreenSize
+                  ? webBackgroundColor
+                  : mobileBackgroundColor,
+              centerTitle: false,
+              title: SvgPicture.asset(
+                'assets/ic_instagram.svg',
+                color: primaryColor,
+                height: 32,
+              ),
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) => const LogOutDialog());
+                    },
+                    icon: const Icon(Icons.logout)),
+              ],
+            ),
       body: StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection('posts')
@@ -54,8 +59,19 @@ class _FeedScreenState extends State<FeedScreen> {
               },
               child: ListView.builder(
                 itemCount: snapshot.data!.docs.length,
-                itemBuilder: (context, index) => PostCard(
-                  snap: snapshot.data!.docs[index].data(),
+                itemBuilder: (context, index) => Container(
+                  margin: EdgeInsets.symmetric(
+                      horizontal:
+                          MediaQuery.of(context).size.width > WebScreenSize
+                              ? MediaQuery.of(context).size.width * 0.3
+                              : 0,
+                      vertical:
+                          MediaQuery.of(context).size.width > WebScreenSize
+                              ? 15
+                              : 0),
+                  child: PostCard(
+                    snap: snapshot.data!.docs[index].data(),
+                  ),
                 ),
               ),
             );

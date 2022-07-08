@@ -4,6 +4,7 @@ import 'package:flutter_gram/responsive/mobile_screen_layout.dart';
 import 'package:flutter_gram/responsive/responsive_layout_screen.dart';
 import 'package:flutter_gram/responsive/web_screen_layout.dart';
 import 'package:flutter_gram/screens/signup_screen.dart';
+import 'package:flutter_gram/utils/global_variables.dart';
 import 'package:flutter_gram/utils/utils.dart';
 import 'package:neopop/neopop.dart';
 import '../widgets/text_field_input.dart';
@@ -50,9 +51,12 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: SafeArea(
         child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 32,
-          ),
+          padding: MediaQuery.of(context).size.width > WebScreenSize
+              ? EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width / 3)
+              : const EdgeInsets.symmetric(
+                  horizontal: 32,
+                ),
           width: double.infinity,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
