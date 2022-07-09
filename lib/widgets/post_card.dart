@@ -2,13 +2,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gram/resources/firestore_methods.dart';
 import 'package:flutter_gram/screens/comments_screen.dart';
+import 'package:flutter_gram/screens/image_view_screen.dart';
+import 'package:flutter_gram/screens/profile_screen.dart';
 import 'package:flutter_gram/utils/colors.dart';
 import 'package:flutter_gram/utils/utils.dart';
 import 'package:flutter_gram/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
+import 'package:image_cacheing/image_cacheing.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:image_downloader/image_downloader.dart';
 import '../models/user.dart';
 import 'package:provider/provider.dart';
-
 import '../providers/user_provider.dart';
 
 class PostCard extends StatefulWidget {
@@ -22,6 +26,7 @@ class PostCard extends StatefulWidget {
 class _PostCardState extends State<PostCard> {
   bool isLikeAnimating = false;
   bool isDeleting = false;
+  bool isDownloading = false;
   var commentLen = 0;
   @override
   void initState() {
@@ -40,13 +45,16 @@ class _PostCardState extends State<PostCard> {
         commentLen = snap.docs.length;
       });
     } catch (err) {
-      showSnackbar(context, err.toString());
+      if (mounted) {
+        showSnackbar(context, err.toString());
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final User user = Provider.of<UserProvider>(context).getUser;
+
     return Container(
       color: mobileBackgroundColor,
       padding: const EdgeInsets.symmetric(
@@ -55,14 +63,21 @@ class _PostCardState extends State<PostCard> {
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 16)
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16)
                 .copyWith(right: 0),
             child: Row(children: [
-              CircleAvatar(
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>
+                          ProfileScreen(uid: widget.snap['uid'])));
+                },
+                child: CircleAvatar(
                   radius: 16,
-                  backgroundImage: NetworkImage(
-                    widget.snap['profImage'],
-                  )),
+                  backgroundImage:
+                      CachedNetworkImageProvider(widget.snap['profImage']),
+                ),
+              ),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 8),
@@ -129,12 +144,21 @@ class _PostCardState extends State<PostCard> {
                 widget.snap['likes'],
               );
             },
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) =>
+                      ImageViewScreen(imageurl: widget.snap['postUrl'])));
+            },
             child: Stack(alignment: Alignment.center, children: [
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.35,
                 width: double.infinity,
-                child: Image.network(
-                  widget.snap['postUrl'],
+                // child: Image.network(
+                //   widget.snap['postUrl'],
+                //   fit: BoxFit.cover,
+                // ),
+                child: ImageCacheing(
+                  url: widget.snap['postUrl'],
                   fit: BoxFit.cover,
                 ),
               ),
@@ -195,10 +219,24 @@ class _PostCardState extends State<PostCard> {
                 ),
               ),
               IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.send,
-                ),
+                onPressed: isDownloading
+                    ? null
+                    : () async {
+                        setState(() {
+                          isDownloading = true;
+                        });
+                        await ImageDownloader.downloadImage(
+                            widget.snap['postUrl']);
+                        setState(() {
+                          isDownloading = false;
+                        });
+                        showSnackbar(context, "Image Downloaded");
+                      },
+                icon: isDownloading
+                    ? const Icon(Icons.downloading_outlined)
+                    : const Icon(
+                        Icons.download,
+                      ),
               ),
               Expanded(
                 child: Align(
@@ -249,11 +287,15 @@ class _PostCardState extends State<PostCard> {
                     ),
                   ),
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              CommentsScreen(snap: widget.snap)));
+                    },
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Text(
-                        'View all ${commentLen} Comments',
+                        'View all $commentLen Comments',
                         style: const TextStyle(
                             fontSize: 16, color: secondaryColor),
                       ),

@@ -18,6 +18,8 @@ class _CommentCardState extends State<CommentCard> {
   @override
   Widget build(BuildContext context) {
     final User user = Provider.of<UserProvider>(context).getUser;
+    print(widget.snap['likes']);
+    print(user.uid);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
       child: Row(children: [
@@ -58,20 +60,18 @@ class _CommentCardState extends State<CommentCard> {
           Container(
             padding: const EdgeInsets.all(8),
             child: IconButton(
-              onPressed: () {
-                FirestoreMethods().likeComment(
-                    widget.snap['postId'],
-                    widget.snap['commentId'],
-                    widget.snap['uid'],
-                    widget.snap['likes']);
+              onPressed: () async {
+                FirestoreMethods().likeComment(widget.snap['postId'],
+                    widget.snap['commentId'], user.uid, widget.snap['likes']);
               },
               icon: widget.snap['likes'].contains(user.uid)
                   ? const Icon(
                       Icons.favorite,
-                      size: 18,
                       color: Colors.red,
                     )
-                  : const Icon(Icons.favorite_outline),
+                  : const Icon(
+                      Icons.favorite_outline,
+                    ),
             ),
           ),
           Positioned(

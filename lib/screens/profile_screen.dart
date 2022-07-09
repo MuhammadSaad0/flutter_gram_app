@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gram/resources/auth_methods.dart';
 import 'package:flutter_gram/resources/firestore_methods.dart';
 import 'package:flutter_gram/utils/colors.dart';
 import 'package:flutter_gram/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_gram/widgets/logout_dialog.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../widgets/follow_button.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -79,7 +79,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         CircleAvatar(
                           radius: 40,
                           backgroundColor: Colors.grey,
-                          backgroundImage: NetworkImage(userData['photoUrl']),
+                          backgroundImage: CachedNetworkImageProvider(userData[
+                              'photoUrl']), //NetworkImage(userData['photoUrl']),
                         ),
                         Expanded(
                           child: Column(children: [
@@ -155,7 +156,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       padding: const EdgeInsets.only(top: 15),
                       child: Text(
                         userData['username'],
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                     Container(
