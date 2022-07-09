@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gram/utils/colors.dart';
@@ -20,7 +21,12 @@ class FeedScreen extends StatefulWidget {
 class _FeedScreenState extends State<FeedScreen> {
   @override
   Widget build(BuildContext context) {
-    final User user = Provider.of<UserProvider>(context).getUser;
+    final user = Provider.of<UserProvider>(context).getUser;
+    if (user == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     return Scaffold(
       appBar: MediaQuery.of(context).size.width > WebScreenSize
           ? null
@@ -52,7 +58,8 @@ class _FeedScreenState extends State<FeedScreen> {
           builder: (context,
               AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting ||
-                !snapshot.hasData) {
+                !snapshot.hasData ||
+                snapshot.data == null) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
