@@ -9,8 +9,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../widgets/follow_button.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final String uid;
-  const ProfileScreen({Key? key, required this.uid}) : super(key: key);
+  String uid;
+  bool myProf;
+  ProfileScreen({Key? key, required this.uid, required this.myProf})
+      : super(key: key);
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -26,12 +28,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    getData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getData();
+    });
   }
 
   getData() async {
     setState(() {
       isLoading = true;
+      if (widget.myProf) {
+        FirebaseAuth.instance.currentUser!.reload();
+        widget.uid = FirebaseAuth.instance.currentUser!.uid;
+      }
     });
     try {
       var userSnap = await FirebaseFirestore.instance
@@ -59,6 +67,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (userData['username'] == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    //getData();
     return isLoading
         ? const Center(
             child: CircularProgressIndicator(),

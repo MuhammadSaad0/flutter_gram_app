@@ -14,5 +14,6 @@ var homeScreenItems = [
   const Text('notif'),
   ProfileScreen(
     uid: FirebaseAuth.instance.currentUser!.uid,
+    myProf: true,
   ),
 ];

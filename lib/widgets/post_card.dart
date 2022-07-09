@@ -69,8 +69,8 @@ class _PostCardState extends State<PostCard> {
               GestureDetector(
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) =>
-                          ProfileScreen(uid: widget.snap['uid'])));
+                      builder: (context) => ProfileScreen(
+                          uid: widget.snap['uid'], myProf: false)));
                 },
                 child: CircleAvatar(
                   radius: 16,
